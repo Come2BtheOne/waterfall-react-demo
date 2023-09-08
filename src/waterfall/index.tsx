@@ -1,6 +1,7 @@
 // 瀑布流
-import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react'
+import React, {useState, useEffect, useRef, useMemo, useCallback} from 'react'
 import './index.scss'
+
 const img1 = 'https://img-wsh.weishouhou.cn/new_upload/2023/02/03/79018632f801a74599b1ced22874d1a0_4a642f41eae4c5f1_28043.jpg'
 const img2 = 'https://img-wsh.weishouhou.cn/new_upload/2023/02/03/2bc6e42632ad6af20f9faa696517ebf5_fb0d3ff679eefccd_36551.jpg'
 const img12 = 'https://img-wsh.weishouhou.cn/new_upload/2023/02/03/88315c89ab89edee6e9584828fae4160_08d344c74ee6a74a_37521.png'
@@ -15,27 +16,31 @@ interface WaterfallFlowItemProps {
   index: number,
   sizeChange?: (height: number, index: number) => void
 }
+
 const WaterfallFlowItem = (props: WaterfallFlowItemProps) => {
-  let { src, title, style = {}, sizeChange = () => { }, unitWidth, index, showBorder } = props
-  let frameDom = useRef(null)
-  let [isLoading, setIsLoading] = useState(false)
-  let [imgInfo, setImgInfo] = useState<{
+  const {
+    src, title, style = {}, sizeChange = () => {
+    }, unitWidth, index, showBorder
+  } = props
+  const frameDom = useRef(null)
+  const [isLoading, setIsLoading] = useState(false)
+  const [imgInfo, setImgInfo] = useState<{
     height: number,
     width: number
   }>({
     height: 1,
     width: 1
   })
-  let imgDom = useRef<any>(null)
+  const imgDom = useRef<any>(null)
 
   /** 离父亲上边框的距离*/
-  let top = useMemo(() => {
+  const top = useMemo(() => {
     let y = style.transform ? Number(style.transform?.substring(style.transform.indexOf(',', 0) + 1, style.transform.length - 3)) : undefined
     return y
   }, [style])
 
   /** 是否加载图片*/
-  let isImgShow = useMemo(() => {
+  const isImgShow = useMemo(() => {
     if (top === undefined) {
       return false
     }
@@ -44,7 +49,7 @@ const WaterfallFlowItem = (props: WaterfallFlowItemProps) => {
 
   /** 符合条件懒加载图片*/
   useEffect(() => {
-    if (imgDom.current === null || src === '' || isImgShow === false) {
+    if (imgDom.current === null || src === '' || !isImgShow) {
       return
     }
     let img = new Image();
@@ -69,21 +74,17 @@ const WaterfallFlowItem = (props: WaterfallFlowItemProps) => {
   }, [imgInfo, index, unitWidth, isLoading, sizeChange])
 
   return (
-    <div className='WaterfallItem' style={{
+    <div className='waterfallItem' style={{
       ...style,
     }} ref={frameDom}>
-      <div className='WaterfallItem__img'>
-        {
-          <img ref={imgDom} style={{
-            visibility: isLoading ? 'visible' : 'hidden'
-          }} />
-        }
+      <div className='waterfallItem__img'>
+        <img ref={imgDom} style={{visibility: isLoading ? 'visible' : 'hidden'}} alt=''/>
       </div>
-      <div className='WaterfallItem__name'>
+      <div className='waterfallItem__name'>
         {title && title}
         {
           !isLoading &&
-            <div className='WaterfallItem__name--placeholder' ></div>
+            <div className='waterfallItem__name--placeholder'></div>
         }
       </div>
     </div>
@@ -102,28 +103,28 @@ export default function WaterfallFlow() {
   /** 样式列表*/
   const [styleList, setStyleList] = useState<React.CSSProperties[]>([])
   /** 自定义骨架屏高度*/
-  let heightList = [170, 230, 300];
+  const heightList = [170, 230, 300];
   /** 到达底部*/
-  let isLoadingData = useRef(false);
+  const isLoadingData = useRef(false);
 
   /** 生成随机数*/
   const createRandomNum = useCallback((min: number, max: number): number => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }, [])
 
-  let waterfallFlowListInfo = useRef<{
+  const waterfallFlowListInfo = useRef<{
     left: number,
     top: number,
     height: number,
   }[]>([])
 
   /** 当前容器信息*/
-  let [frameInfo, setFrameInfoInfo] = useState<{
+  const [frameInfo, setFrameInfoInfo] = useState<{
     width: number,
-  }>({ width: 0 })
+  }>({width: 0})
 
   /** 每行个数*/
-  let rowsNum = useMemo(() => {
+  const rowsNum = useMemo(() => {
     let width = frameInfo.width || 0;
     if (width >= 1200) {
       return 6
